@@ -1,0 +1,28 @@
+name: AniTrack
+description: A new Flutter project.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # oauth2_client: ^1.4.4
+  oauth2_client:
+    git: https://github.com/KodingDev/oauth2_client.git
+  graphql_flutter: ^3.0.0
+  duration: ^2.0.15
+  transparent_image: ^1.0.0
+  wave: ^0.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - lib/assets/logo.png
+    - lib/assets/background/login.jpg

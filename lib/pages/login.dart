@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
@@ -24,40 +22,37 @@ class LoginPage extends StatelessWidget {
                     colorFilter: ColorFilter.mode(
                         Color(0xFF232628).withOpacity(0.2), BlendMode.dstATop),
                     fit: BoxFit.cover,
-                    image: AssetImage("lib/assets/background/login.jpg"))),
+                    image: AssetImage('assets/background/login.jpg'))),
             child: Column(
               children: [
-                Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.rotationZ(pi),
+                RotatedBox(
+                    quarterTurns: 2,
                     child: WaveWidget(
                         config: CustomConfig(
                           colors: [Color(0xFF1a1c1e)],
                           durations: [20000],
                           heightPercentages: [0.3],
                         ),
-                        waveAmplitude: -10,
                         backgroundColor: Color(0x00232628),
                         size: Size.fromHeight(100))),
                 Spacer(),
-                Image.asset("lib/assets/logo.png",
+                Image.asset('assets/logo.png',
                     width: 100, height: 60, fit: BoxFit.cover),
                 SizedBox(height: 10),
                 Text(
-                  "Welcome!",
+                  'Welcome!',
                   style: Theme.of(context).textTheme.headline6,
                 ),
                 SizedBox(height: 5),
                 Text(
-                  "Please login to your AniList account.",
+                  'Please login to your AniList account.',
                   style: Theme.of(context).textTheme.bodyText2,
                 ),
                 SizedBox(height: 10),
                 RaisedButton(
-                  child: Text("Login"),
-                  onPressed: () => helper.getToken().then((v) {
-                    this.callback.call();
-                  }),
+                  child: Text('Login'),
+                  onPressed: () =>
+                      helper.getToken().then((v) => callback.call()),
                 ),
                 Spacer(),
                 WaveWidget(
@@ -66,7 +61,6 @@ class LoginPage extends StatelessWidget {
                       durations: [20000],
                       heightPercentages: [0.3],
                     ),
-                    waveAmplitude: 10,
                     backgroundColor: Color(0x00232628),
                     size: Size.fromHeight(100))
               ],

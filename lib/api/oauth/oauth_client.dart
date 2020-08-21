@@ -13,7 +13,7 @@ class AniListClient extends OAuth2Client {
 }
 
 OAuth2Helper createHelper() {
-  AniListClient client = AniListClient(
+  var client = AniListClient(
       customUriScheme: 'anitrack', redirectUri: 'anitrack://oauth2');
   return OAuth2Helper(
     client,

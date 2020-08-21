@@ -13,8 +13,8 @@ class RoundedContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipPath(
       clipper: ShapeBorderClipper(
-          shape: RoundedRectangleBorder(borderRadius: this.radius)),
-      child: this.child,
+          shape: RoundedRectangleBorder(borderRadius: radius)),
+      child: child,
     );
   }
 }

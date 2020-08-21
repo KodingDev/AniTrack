@@ -4,13 +4,13 @@ import 'package:duration/duration.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../avatar.dart';
+import '../image.dart';
 import '../../util/text.dart';
 
-class FeedItem extends StatelessWidget {
+class FeedActivityMedia extends StatelessWidget {
   final AniListListActivity activity;
 
-  const FeedItem({Key key, @required this.activity})
+  const FeedActivityMedia({Key key, @required this.activity})
       : assert(activity != null),
         super(key: key);
 
@@ -70,7 +70,7 @@ class FeedItem extends StatelessWidget {
                                                   activity.createdAt),
                                           tersity: DurationTersity.all,
                                           first: true) +
-                                      " ago",
+                                      ' ago',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText1
@@ -92,7 +92,7 @@ class FeedItem extends StatelessWidget {
                                           fontSize: 12),
                                   children: <TextSpan>[
                                     TextSpan(
-                                        text: "${activity.status.capitalize()} " +
+                                        text: '${activity.status.capitalize()} '
                                             "${activity.progress == null ? "" : "${activity.progress} of "}"),
                                     TextSpan(
                                         style: Theme.of(context)
@@ -110,10 +110,50 @@ class FeedItem extends StatelessWidget {
   }
 }
 
-class FeedInProgress extends StatelessWidget {
+class FeedProgressHeader extends StatelessWidget {
+  final List<AniListMediaList> media;
+
+  const FeedProgressHeader({Key key, @required this.media}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    media.sort((i, j) => j.progress.compareTo(i.progress));
+
+    return Container(
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          child: Text('In Progress',
+              style: Theme.of(context)
+                  .textTheme
+                  .subtitle2
+                  .copyWith(color: Colors.grey.shade200))),
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            SizedBox(width: 10),
+            for (AniListMediaList item in media)
+              Container(
+                  constraints: BoxConstraints(maxHeight: 100, maxWidth: 200),
+                  child: FeedMediaProgress(media: item)),
+            if (media.isEmpty)
+              Container(
+                  constraints: BoxConstraints(maxHeight: 100, maxWidth: 200),
+                  child: FeedLoadingCard()),
+            SizedBox(width: 10),
+          ],
+        ),
+      )
+    ]));
+  }
+}
+
+class FeedMediaProgress extends StatelessWidget {
   final AniListMediaList media;
 
-  const FeedInProgress({Key key, @required this.media})
+  const FeedMediaProgress({Key key, @required this.media})
       : assert(media != null),
         super(key: key);
 
@@ -151,7 +191,7 @@ class FeedInProgress extends StatelessWidget {
                           ),
                           Spacer(),
                           Text(
-                            "Progress: ${media.progress}/${media.media.episodes}",
+                            'Progress: ${media.progress}/${media.media.episodes}',
                             style: Theme.of(context)
                                 .textTheme
                                 .caption
@@ -163,7 +203,7 @@ class FeedInProgress extends StatelessWidget {
   }
 }
 
-class LoadingFeed extends StatelessWidget {
+class FeedLoadingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -173,8 +213,9 @@ class LoadingFeed extends StatelessWidget {
               // Cover image on the left
               Flexible(
                   flex: 2,
-                  child: Center(child: Image.asset("lib/assets/logo.png",
-                      fit: BoxFit.contain, width: 60))),
+                  child: Center(
+                      child: Image.asset('assets/logo.png',
+                          fit: BoxFit.contain, width: 60))),
 
               // Spacer
               SizedBox(width: 5),
@@ -189,7 +230,7 @@ class LoadingFeed extends StatelessWidget {
                         children: [
                           Spacer(),
                           Text(
-                            "Uh oh!",
+                            'Uh oh!',
                             style: Theme.of(context).textTheme.button.copyWith(
                                 color: Colors.grey.shade300, fontSize: 14),
                           ),

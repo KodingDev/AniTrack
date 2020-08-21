@@ -1,0 +1,13 @@
+query Viewer {
+  Viewer {
+    name
+    statistics {
+      anime {
+        count
+      }
+    }
+    avatar {
+      large
+    }
+  }
+}

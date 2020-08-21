@@ -1,5 +1,5 @@
 import 'package:AniTrack/api/graphql/graphql.dart';
-import 'package:AniTrack/components/appbar.dart';
+import 'package:AniTrack/components/navigation.dart';
 import 'package:AniTrack/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -27,22 +27,22 @@ class MainPage extends StatefulWidget {
         super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _MainPageState(this.oauth);
+  State<StatefulWidget> createState() => _MainPageState(oauth);
 }
 
 class _MainPageState extends State<MainPage> {
   int _index = 0;
   final List<_NavigationEntry> _entries = [
-    _NavigationEntry(label: "Feed", icon: Icons.list, widget: FeedPage()),
-    _NavigationEntry(label: "Home", icon: Icons.house, widget: FeedPage()),
+    _NavigationEntry(label: 'Feed', icon: Icons.list, widget: FeedPage()),
+    _NavigationEntry(label: 'Home', icon: Icons.house, widget: FeedPage()),
   ];
 
   final OAuth2Helper oauth;
 
   ValueNotifier client;
-  Widget body;
   bool needsLogin = false;
 
+  @override
   void initState() {
     super.initState();
     oauth.getTokenFromStorage().then((v) {
@@ -53,7 +53,6 @@ class _MainPageState extends State<MainPage> {
         }
 
         client = createClient(oauth);
-        body = _entries[_index].widget;
       });
     });
   }
@@ -70,36 +69,31 @@ class _MainPageState extends State<MainPage> {
                 setState(() {
                   needsLogin = false;
                   client = createClient(oauth);
-                  body = _entries[_index].widget;
                 });
               }));
     }
 
-    if (body == null) {
+    if (client == null) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return GraphQLProvider(
         client: client,
         child: Scaffold(
-          appBar: body != null
-              ? PreferredSize(
-                  child: AniTrackAppBar(), preferredSize: Size.fromHeight(50))
-              : null,
-          body: body ?? CircularProgressIndicator(),
-          bottomNavigationBar: body != null
-              ? BottomNavigationBar(
-                  selectedFontSize: 12,
-                  selectedItemColor: Colors.blue,
-                  unselectedItemColor: Colors.white,
-                  items: _entries
-                      .map((e) => BottomNavigationBarItem(
-                          label: e.label, icon: Icon(e.icon)))
-                      .toList(),
-                  currentIndex: _index,
-                  onTap: (value) => setState(() => _index = value),
-                )
-              : null,
+          appBar: PreferredSize(
+              child: AniTrackAppBar(), preferredSize: Size.fromHeight(50)),
+          body: _entries[_index].widget,
+          bottomNavigationBar: BottomNavigationBar(
+            selectedFontSize: 12,
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.white,
+            items: _entries
+                .map((e) =>
+                    BottomNavigationBarItem(label: e.label, icon: Icon(e.icon)))
+                .toList(),
+            currentIndex: _index,
+            onTap: (value) => setState(() => _index = value),
+          ),
         ));
   }
 }

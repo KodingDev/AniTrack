@@ -1,0 +1,16 @@
+query MediaList($id: Int, $page: Int = 1) {
+  Page(page: $page, perPage: 25) {
+    mediaList(userId: $id, status_in: [CURRENT, REPEATING]) {
+      media {
+        episodes
+        title {
+          userPreferred
+        }
+        coverImage {
+          large
+        }
+      }
+      progress
+    }
+  }
+}

@@ -1,0 +1,30 @@
+query Feed($page: Int = 1) {
+  Viewer {
+    id
+  }
+  Page(page: $page, perPage: 25) {
+    activities(isFollowing: true, hasRepliesOrTypeText: false, type_in: [ANIME_LIST, MANGA_LIST], sort: ID_DESC) {
+      ... on ListActivity {
+        id
+        type
+        status
+        progress
+        createdAt
+        user {
+          name
+          avatar {
+            large
+          }
+        }
+        media {
+          title {
+            userPreferred
+          }
+          coverImage {
+            large
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,127 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+      - ci
+env:
+  flutter_version: "1.21.0-9.1.pre"
+  java_version: "12.x"
+jobs:
+  build_ios:
+    name: Build Flutter (iOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.java_version }}
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v1
+        with:
+          path: /Users/runner/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.flutter_version }}
+      - run: flutter pub get
+      - run: flutter clean
+      - run: flutter build ios --release --no-codesign
+      - name: Install ldid
+        run: |
+          brew install ldid
+      - name: Resign App
+        run: |
+          chmod +x ./scripts/resign.sh
+          ./scripts/resign.sh build/ios/iphoneos .
+      - name: Upload IPA
+        uses: actions/upload-artifact@master
+        with:
+          name: ios-build
+          path: Runner.ipa
+  build_apk:
+    name: Build Flutter (Android)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.java_version }}
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v1
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.flutter_version }}
+      - run: flutter pub get
+      - run: flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi
+      - name: Upload APK
+        uses: actions/upload-artifact@master
+        with:
+          name: apk-build
+          path: build/app/outputs/apk/release
+  create_release:
+    name: Create Release
+    needs: [build_ios, build_apk]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Declare Variables
+        id: vars
+        run: echo "::set-output name=sha_short::`git describe --tags --always --first-parent`"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: release/${{ steps.vars.outputs.sha_short }}
+          release_name: Beta ${{ steps.vars.outputs.sha_short }}
+          draft: false
+          prerelease: true
+      - name: Download iOS Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: ios-build
+      - name: Upload iOS
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./Runner.ipa
+          asset_name: AniTrack.ipa
+          asset_content_type: application/octet-stream
+      - name: Download Android Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: apk-build
+      - name: Upload Android arm64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./app-arm64-v8a-release.apk
+          asset_name: AniTrack-arm64.apk
+          asset_content_type: application/zip
+      - name: Upload Android armeabi
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./app-armeabi-v7a-release.apk
+          asset_name: AniTrack-armeabi.apk
+          asset_content_type: application/zip
+      - name: Upload Android armeabi
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./app-x86_64-release.apk
+          asset_name: AniTrack-x86_64.apk
+          asset_content_type: application/zip

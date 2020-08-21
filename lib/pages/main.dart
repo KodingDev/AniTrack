@@ -89,7 +89,7 @@ class _MainPageState extends State<MainPage> {
             unselectedItemColor: Colors.white,
             items: _entries
                 .map((e) =>
-                    BottomNavigationBarItem(label: e.label, icon: Icon(e.icon)))
+                    BottomNavigationBarItem(title: Text(e.label), icon: Icon(e.icon)))
                 .toList(),
             currentIndex: _index,
             onTap: (value) => setState(() => _index = value),

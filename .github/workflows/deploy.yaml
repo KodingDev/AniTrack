@@ -28,7 +28,7 @@ jobs:
           channel: ${{ env.flutter_channel }}
       - run: flutter pub get
       - run: flutter clean
-      - run: flutter build ios --release --no-codesign
+      - run: flutter build ios --release --no-codesign -v
       - name: Install ldid
         run: |
           brew install ldid

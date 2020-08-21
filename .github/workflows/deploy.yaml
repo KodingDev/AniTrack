@@ -6,6 +6,7 @@ on:
       - ci
 env:
   flutter_version: "1.21.0-9.1.pre"
+  flutter_channel: "beta"
   java_version: "12.x"
 jobs:
   build_ios:
@@ -24,6 +25,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: ${{ env.flutter_version }}
+          channel: ${{ env.flutter_channel }}
       - run: flutter pub get
       - run: flutter clean
       - run: flutter build ios --release --no-codesign
@@ -55,6 +57,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           flutter-version: ${{ env.flutter_version }}
+          channel: ${{ env.flutter_channel }}
       - run: flutter pub get
       - run: flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi
       - name: Upload APK

@@ -3,6 +3,7 @@ import 'package:AniTrack/api/graphql/queries.dart';
 import 'package:AniTrack/components/pages/feed.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:responsive_grid/responsive_grid.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -36,13 +37,16 @@ class _FeedPageState extends State<FeedPage> {
                             .textTheme
                             .subtitle2
                             .copyWith(color: Colors.grey.shade200))),
-                ListView.builder(
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: activities.length,
-                    itemBuilder: (context, index) {
-                      return FeedActivityMedia(activity: activities[index]);
-                    }),
+                ResponsiveGridRow(
+                  children: List.generate(
+                      activities.length,
+                      (index) => ResponsiveGridCol(
+                          sm: 12,
+                          md: 6,
+                          lg: 4,
+                          child:
+                              FeedActivityMedia(activity: activities[index]))),
+                )
               ],
             ),
           )

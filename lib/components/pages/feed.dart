@@ -188,6 +188,8 @@ class FeedMediaProgress extends StatelessWidget {
                             media.media.title.userPreferred,
                             style: Theme.of(context).textTheme.button.copyWith(
                                 color: Colors.grey.shade300, fontSize: 14),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           Spacer(),
                           Text(

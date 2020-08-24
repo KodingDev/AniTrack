@@ -5,34 +5,40 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 class GraphQLQuery extends StatefulWidget {
   final String queryFile;
-  final Widget Function(dynamic) build;
-  final Map<String, dynamic> variables;
+  final Widget Function(dynamic, Function()) build;
+  final Map<String, dynamic> Function() variables;
   final Widget Function() loading;
+  final FetchMoreOptions Function(String query, Map<String, dynamic> variables)
+      createFetchOptions;
 
   const GraphQLQuery(
       {Key key,
       @required this.queryFile,
       @required this.build,
-      this.variables = const {},
-      this.loading})
+      this.variables,
+      this.loading,
+      this.createFetchOptions})
       : assert(queryFile != null),
         assert(build != null),
         super(key: key);
 
   @override
-  State<StatefulWidget> createState() =>
-      _GraphQLQueryState(queryFile, build, variables, loading);
+  State<StatefulWidget> createState() => _GraphQLQueryState(
+      queryFile, build, variables, loading, createFetchOptions);
 }
 
 class _GraphQLQueryState extends State<GraphQLQuery> {
   final String queryFile;
-  final Widget Function(dynamic) createWidget;
-  final Map<String, dynamic> variables;
+  final Widget Function(dynamic, Function()) createWidget;
+  final Map<String, dynamic> Function() variables;
   final Widget Function() loading;
+  final FetchMoreOptions Function(String query, Map<String, dynamic> variables)
+      createFetchOptions;
 
   String query;
 
-  _GraphQLQueryState(this.queryFile, this.createWidget, this.variables, this.loading);
+  _GraphQLQueryState(this.queryFile, this.createWidget, this.variables,
+      this.loading, this.createFetchOptions);
 
   @override
   void initState() {
@@ -43,21 +49,32 @@ class _GraphQLQueryState extends State<GraphQLQuery> {
         .then((value) => setState(() => query = value));
   }
 
+  Map<String, dynamic> get variable =>
+      Map<String, dynamic>.from(variables?.call() ?? {});
+
   @override
   Widget build(BuildContext context) {
     if (query == null) {
-      return loading == null ? Center(child: CircularProgressIndicator()) : loading();
+      return loading == null
+          ? Center(child: CircularProgressIndicator())
+          : loading();
     }
 
     return Query(
-        options: QueryOptions(documentNode: gql(query), variables: variables),
+        options: QueryOptions(documentNode: gql(query), variables: variable),
         builder: (QueryResult result,
             {FetchMore fetchMore, VoidCallback refetch}) {
-          if (result.loading || result.hasException) {
-            return loading == null ? Center(child: CircularProgressIndicator()) : loading();
+          if (result.data == null || result.hasException) {
+            return loading == null
+                ? Center(child: CircularProgressIndicator())
+                : loading();
           }
 
-          return createWidget(result.data);
+          return createWidget(result.data, () {
+            fetchMore(createFetchOptions?.call(query, variable) ??
+                FetchMoreOptions(
+                    updateQuery: (i, j) => j, variables: variable));
+          });
         });
   }
 }

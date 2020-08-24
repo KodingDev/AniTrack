@@ -18,7 +18,7 @@ class _AniTrackAppBarState extends State<AniTrackAppBar> {
         child: GraphQLQuery(
           queryFile: 'appbar',
           loading: () => CircularProgressIndicator(),
-          build: (data) {
+          build: (data, _) {
             var user = AniListUser.fromJson(data['Viewer']);
             return Row(
               children: [

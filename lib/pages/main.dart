@@ -1,6 +1,7 @@
 import 'package:AniTrack/api/graphql/graphql.dart';
 import 'package:AniTrack/components/navigation.dart';
 import 'package:AniTrack/pages/login.dart';
+import 'package:AniTrack/util/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
@@ -45,14 +46,16 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    oauth.getTokenFromStorage().then((v) {
-      setState(() {
-        if (v == null) {
-          needsLogin = true;
-          return;
-        }
+    clearSecureStorageOnReinstall().then((_) {
+      oauth.getTokenFromStorage().then((v) {
+        setState(() {
+          if (v == null) {
+            needsLogin = true;
+            return;
+          }
 
-        client = createClient(oauth);
+          client = createClient(oauth);
+        });
       });
     });
   }
@@ -88,8 +91,8 @@ class _MainPageState extends State<MainPage> {
             selectedItemColor: Colors.blue,
             unselectedItemColor: Colors.white,
             items: _entries
-                .map((e) =>
-                    BottomNavigationBarItem(title: Text(e.label), icon: Icon(e.icon)))
+                .map((e) => BottomNavigationBarItem(
+                    title: Text(e.label), icon: Icon(e.icon)))
                 .toList(),
             currentIndex: _index,
             onTap: (value) => setState(() => _index = value),

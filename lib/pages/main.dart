@@ -5,6 +5,7 @@ import 'package:AniTrack/util/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
+import 'package:responsive_widgets/responsive_widgets.dart';
 
 import 'feed.dart';
 
@@ -64,39 +65,58 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final height = size.height / 1.18;
+    final width = size.width / 1.18;
+
+    ResponsiveWidgets.init(context,
+        width: width, height: height, allowFontScaling: true);
+
     if (needsLogin) {
-      return Scaffold(
-          body: LoginPage(
-              helper: oauth,
-              callback: () {
-                setState(() {
-                  needsLogin = false;
-                  client = createClient(oauth);
-                });
-              }));
+      return ResponsiveWidgets.builder(
+          height: height,
+          width: width,
+          allowFontScaling: true,
+          child: Scaffold(
+              body: LoginPage(
+                  helper: oauth,
+                  callback: () {
+                    setState(() {
+                      needsLogin = false;
+                      client = createClient(oauth);
+                    });
+                  })));
     }
 
     if (client == null) {
-      return Scaffold(body: Center(child: CircularProgressIndicator()));
+      return ResponsiveWidgets.builder(
+          height: height,
+          width: width,
+          allowFontScaling: true,
+          child: Scaffold(body: Center(child: CircularProgressIndicator())));
     }
 
-    return GraphQLProvider(
-        client: client,
-        child: Scaffold(
-          appBar: PreferredSize(
-              child: AniTrackAppBar(), preferredSize: Size.fromHeight(50)),
-          body: _entries[_index].widget,
-          bottomNavigationBar: BottomNavigationBar(
-            selectedFontSize: 12,
-            selectedItemColor: Colors.blue,
-            unselectedItemColor: Colors.white,
-            items: _entries
-                .map((e) => BottomNavigationBarItem(
-                    title: Text(e.label), icon: Icon(e.icon)))
-                .toList(),
-            currentIndex: _index,
-            onTap: (value) => setState(() => _index = value),
-          ),
-        ));
+    return ResponsiveWidgets.builder(
+        height: height,
+        width: width,
+        allowFontScaling: true,
+        child: GraphQLProvider(
+            client: client,
+            child: Scaffold(
+              appBar: PreferredSize(
+                  child: AniTrackAppBar(), preferredSize: Size.fromHeight(50)),
+              body: _entries[_index].widget,
+              bottomNavigationBar: BottomNavigationBar(
+                selectedFontSize: 12,
+                selectedItemColor: Colors.blue,
+                unselectedItemColor: Colors.white,
+                items: _entries
+                    .map((e) => BottomNavigationBarItem(
+                        title: Text(e.label), icon: Icon(e.icon)))
+                    .toList(),
+                currentIndex: _index,
+                onTap: (value) => setState(() => _index = value),
+              ),
+            )));
   }
 }

@@ -111,6 +111,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_responsive:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "6c7cb03c07578840537008f5533f0d09f49d8d24"
+      url: "https://github.com/KodingDev/flutter_responsive.git"
+    source: git
+    version: "0.0.6"
+  flutter_screenutil:
+    dependency: transitive
+    description:
+      name: flutter_screenutil
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -284,13 +300,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  responsive_grid:
+  responsive_widgets:
     dependency: "direct main"
     description:
-      name: responsive_grid
+      name: responsive_widgets
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.1+1"
+    version: "2.0.1"
   rxdart:
     dependency: transitive
     description:

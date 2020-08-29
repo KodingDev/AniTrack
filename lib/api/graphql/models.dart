@@ -1,12 +1,15 @@
 class AniListPage {
   List<AniListActivity> activities;
   List<AniListMediaList> mediaList;
+  List<AniListMedia> media;
 
   AniListPage.fromJson(Map<String, dynamic> data)
       : activities = List<AniListActivity>.from(
             (data['activities'] ?? []).map((e) => AniListActivity.fromJson(e))),
         mediaList = List<AniListMediaList>.from(
-            (data['mediaList'] ?? []).map((e) => AniListMediaList.fromJson(e)));
+            (data['mediaList'] ?? []).map((e) => AniListMediaList.fromJson(e))),
+        media = List<AniListMedia>.from(
+            (data['media'] ?? []).map((e) => AniListMedia.fromJson(e)));
 }
 
 class AniListMediaList {
@@ -52,11 +55,17 @@ class AniListMedia {
   AniListMediaTitle title;
   AniListMediaCoverImage coverImage;
   int episodes;
+  int trending;
+  String format;
+  String status;
 
   AniListMedia.fromJson(Map<String, dynamic> data)
       : title = AniListMediaTitle.fromJson(data['title'] ?? {}),
         coverImage = AniListMediaCoverImage.fromJson(data['coverImage'] ?? {}),
-        episodes = data['episodes'];
+        episodes = data['episodes'],
+        trending = data['trending'],
+        format = data['format'],
+        status = data['status'];
 }
 
 class AniListMediaTitle {

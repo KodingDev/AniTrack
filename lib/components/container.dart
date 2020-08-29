@@ -18,3 +18,19 @@ class RoundedContainer extends StatelessWidget {
     );
   }
 }
+
+class SimpleColumn extends StatelessWidget {
+  final List<Widget> children;
+
+  const SimpleColumn(this.children, {Key key})
+      : assert(children != null),
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: children,
+    );
+  }
+}

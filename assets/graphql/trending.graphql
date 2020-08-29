@@ -1,0 +1,17 @@
+{
+  Trending: Page(perPage: 5) {
+    media(isAdult: false, sort: TRENDING_DESC, type: ANIME) {
+      type
+      episodes
+      trending
+      format
+      status
+      title {
+        userPreferred
+      }
+      coverImage {
+        large
+      }
+    }
+  }
+}

@@ -5,7 +5,8 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 class GraphQLQuery extends StatefulWidget {
   final String queryFile;
-  final Widget Function(dynamic, Function()) build;
+  final Widget Function(dynamic data, Function() fetchMore, Refetch reload)
+      build;
   final Map<String, dynamic> Function() variables;
   final Widget Function() loading;
   final FetchMoreOptions Function(String query, Map<String, dynamic> variables)
@@ -29,7 +30,8 @@ class GraphQLQuery extends StatefulWidget {
 
 class _GraphQLQueryState extends State<GraphQLQuery> {
   final String queryFile;
-  final Widget Function(dynamic, Function()) createWidget;
+  final Function(dynamic data, Function() fetchMore, Refetch reload)
+      createWidget;
   final Map<String, dynamic> Function() variables;
   final Widget Function() loading;
   final FetchMoreOptions Function(String query, Map<String, dynamic> variables)
@@ -62,8 +64,7 @@ class _GraphQLQueryState extends State<GraphQLQuery> {
 
     return Query(
         options: QueryOptions(documentNode: gql(query), variables: variable),
-        builder: (QueryResult result,
-            {FetchMore fetchMore, VoidCallback refetch}) {
+        builder: (QueryResult result, {FetchMore fetchMore, Refetch refetch}) {
           if (result.data == null || result.hasException) {
             return loading == null
                 ? Center(child: CircularProgressIndicator())
@@ -74,7 +75,7 @@ class _GraphQLQueryState extends State<GraphQLQuery> {
             fetchMore(createFetchOptions?.call(query, variable) ??
                 FetchMoreOptions(
                     updateQuery: (i, j) => j, variables: variable));
-          });
+          }, refetch);
         });
   }
 }

@@ -27,7 +27,7 @@ class _AniTrackState extends State<AniTrack> {
     return MaterialApp(
       title: 'AniTrack',
       theme: ThemeData(
-          accentColor: Color(0xFF222435),
+          accentColor: Colors.blue,
           appBarTheme: AppBarTheme(color: Color(0xFF222435)),
           cardColor: Color(0xFF1a1c1e),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
